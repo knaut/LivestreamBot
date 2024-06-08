@@ -1,3 +1,6 @@
+import ComfyJS from 'comfy.js';
+import { Client, Server } from 'node-osc';
+
 // should be a string literal...?
 const HOST_IP: '192.168.0.30' = '192.168.0.30';
 
@@ -25,16 +28,36 @@ interface Config {
 class Bot {
 	// name: string = "my name is";
 	config: object
+	comfy: any
 
 	constructor(config: Config) {
 		this.config = config;
+		this.comfy = ComfyJS;
+
+		const { bot, oauth, channel } = this.comfy
+
+		if (!channel) {
+			this.comfy.Init(bot, oauth)
+		} else {
+			this.comfy.Init(bot, oauth, channel)
+		}
 	}
 
 	showConfig() {
 		return this.config
 	}
 
-	
+	// setupTwitch({ bot, oauth, channel }) {
+
+	// 	if (!channel) {
+	// 		this.comfy.Init(bot, oauth)
+	// 	} else {
+	// 		this.comfy.Init(bot, oauth, channel)
+	// 	}
+
+
+	// }
+
 }
 
 const config: Config = {

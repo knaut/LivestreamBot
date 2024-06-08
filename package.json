@@ -14,6 +14,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@types/node-osc": "^6.0.3",
     "comfy.js": "^1.1.16",
     "node-osc": "^9.1.2"
   }
