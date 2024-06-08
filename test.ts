@@ -1,6 +1,8 @@
 import ComfyJS from 'comfy.js';
 import { Client, Server } from 'node-osc';
 
+const DEBUG: boolean = true;
+
 // should be a string literal...?
 const HOST_IP: '192.168.0.30' = '192.168.0.30';
 
@@ -16,7 +18,7 @@ interface Config {
 		oauth: string,
 		channel: string
 	},
-	osc?: {
+	osc: {
 		server: {
 			host: string,
 			port: number
@@ -27,36 +29,57 @@ interface Config {
 
 class Bot {
 	// name: string = "my name is";
-	config: object
+	// config: object
+	
 	comfy: any
+	osc: {
+		server: object,
+		clients: object
+	}
 
 	constructor(config: Config) {
-		this.config = config;
+		// this.config = config; // consider not doing this
+
 		this.comfy = ComfyJS;
+		this.osc = config.osc
 
-		const { bot, oauth, channel } = this.comfy
+		// comfyjs setup
+		const { bot, oauth, channel } = config.comfy
+		this.setupTwitch({ bot, oauth, channel });
 
-		if (!channel) {
-			this.comfy.Init(bot, oauth)
+		// osc setup
+		const { clients } = config.osc
+		const newClients = this.setupOSC(clients);
+		this.osc.clients = newClients
+		
+		console.log(this.osc)
+	}
+
+	setupTwitch({ bot, oauth, channel}) {
+		if (!DEBUG) {
+			if (!channel) {
+				this.comfy.Init(bot, oauth)
+			} else {
+				this.comfy.Init(bot, oauth, channel)
+			}	
 		} else {
-			this.comfy.Init(bot, oauth, channel)
+			console.log('ran setupTwitch() with:', bot);
 		}
 	}
 
-	showConfig() {
-		return this.config
+	setupOSC(clients) {
+		const newClients: object = {}
+
+		for (let i = 0; clients.length > i; i++) {
+			const { name, host, port } = clients[i]
+
+			const client = new Client(host, port)
+
+			newClients[name] = client
+		}
+
+		return newClients
 	}
-
-	// setupTwitch({ bot, oauth, channel }) {
-
-	// 	if (!channel) {
-	// 		this.comfy.Init(bot, oauth)
-	// 	} else {
-	// 		this.comfy.Init(bot, oauth, channel)
-	// 	}
-
-
-	// }
 
 }
 
@@ -83,7 +106,6 @@ const config: Config = {
 
 const bot = new Bot(config);
 
-console.log(bot.config)
 
 
 
