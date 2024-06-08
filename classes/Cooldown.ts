@@ -5,20 +5,13 @@ export default class Cooldown {
 	length: number = 4000
 	timeout: typeof timer
 
-	constructor({ active, length, timeout }) {
-		this.active = active
+	constructor({ length }) {
 	    this.length = length || 4000
-	    // this.timeout = timeout || null //might be problem?
-	    this.timeout = timeout
 	}
 
-	start(onStart, onComplete) {
+	start(onComplete?) {
 		
 		this.active = true;
-
-		if (onStart) {
-			onStart()
-		}
 
 		this.timeout = setTimeout(() => {
 			this.active = false
