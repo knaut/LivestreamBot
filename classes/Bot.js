@@ -5,9 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var comfy_js_1 = __importDefault(require("comfy.js"));
 var node_osc_1 = require("node-osc");
-var DEBUG = true;
-// should be a string literal...?
-var HOST_IP = '192.168.0.30';
+var DEBUG = true; // make this global/env
 var Bot = /** @class */ (function () {
     function Bot(config) {
         // this.config = config; // consider not doing this
@@ -47,25 +45,5 @@ var Bot = /** @class */ (function () {
     };
     return Bot;
 }());
-var config = {
-    comfy: {
-        bot: 'BOT_NAME_HERE',
-        oauth: 'OAUTH_HERE',
-        channel: 'CHANNEL_NAME_HERE'
-    },
-    osc: {
-        server: {
-            host: HOST_IP,
-            port: 5000
-        },
-        clients: [
-            {
-                name: 'IPAD',
-                host: HOST_IP,
-                port: 5001
-            }
-        ]
-    }
-};
-var bot = new Bot(config);
-//# sourceMappingURL=test.js.map
+exports.default = Bot;
+//# sourceMappingURL=Bot.js.map
