@@ -4,8 +4,8 @@
   "description": "a twitch chatbot with OSC integration",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "watch": "npx tsc --watch",
-    "run": "npx tsc test.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

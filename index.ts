@@ -4,49 +4,37 @@ dotenv.config();
 import fs from 'fs'
 import { exec } from 'child_process'
 
+import Config from './interfaces/Config'
+import Bot from './classes/Bot'
 
-// const fredSays = function(string) {
-//   exec(`say -v Victoria "${string}"`)
-// }
+// ingest config file
+const botConfig = JSON.parse( fs.readFileSync('./config.json', 'utf8') );
+
+// should be a string literal...?
+// const HOST_IP: '192.168.0.30' = '192.168.0.30';
+
+const config: Config = {
+	twitch: {
+		bot: process.env.BOT,
+		oauth: process.env.GLEUBOT_OAUTH_TOKEN,
+		channel: process.env.CHANNEL
+	},
+	...botConfig
+}
+
+const bot = new Bot(config);
+
+
+
+
+console.log(bot)
+
+
 
 const botSays = function(voice: string, str: string) {
 	exec(`say -v ${voice} "${str}"`)
 }
 
-
-
-
-import Config from './interfaces/Config'
-import Bot from './classes/Bot'
-
-
-// should be a string literal...?
-const HOST_IP: '192.168.0.30' = '192.168.0.30';
-
-const config: Config = {
-	comfy: {
-		bot: process.env.BOT,
-		oauth: process.env.GLEUBOT_OAUTH_TOKEN,
-		channel: process.env.CHANNEL
-	},
-	osc: {
-		server: {
-			host: HOST_IP,
-			port: 5000
-		},
-		clients: [
-			{
-				name: 'IPAD',
-				host: HOST_IP,
-				port: 5001
-			}
-		]
-	}
-}
-
-const bot = new Bot(config);
-
-const testconfig = JSON.parse( fs.readFileSync('./config.json', 'utf8') );
 /*
 bot.comfy.onReward = function(user, reward, cost, message, extra) {
 	console.log( user + " redeemed " + reward + " for " + cost )

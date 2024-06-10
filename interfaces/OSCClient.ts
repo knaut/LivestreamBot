@@ -1,5 +1,5 @@
 export default interface OSCClient {
-	name: string,
-	host: string,
-	port: number
+	NAME: string,
+	IP: string,
+	PORT: number
 }

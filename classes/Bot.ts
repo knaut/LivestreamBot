@@ -4,69 +4,97 @@ import { Client, Server } from 'node-osc';
 import Config from '../interfaces/Config';
 import OSCClient from '../interfaces/OSCClient';
 
-const DEBUG: boolean = false; // make this global/env
+const DEBUG: boolean = true; // make this global/env
 
 
+function setupTwitch( botName: string, oauthKey: string, channelName: string) {
+	if (DEBUG) {
+		console.log('DEBUG mode is ON');
+	} else {
+		// TODO: branch for case when bot is third party
+		// and not channel user's OAuth
+		// see: https://github.com/instafluff/ComfyJS?tab=readme-ov-file#channel-point-reward-redemptions
+		// this is channel user ONLY
+		ComfyJS.Init(botName, oauthKey, channelName);
+	}
+}
 
+function setupOSCClients( clients: Array<OSCClient> | OSCClient ) {
+	const newClients: object = {};
+
+	if (Array.isArray(clients)) {
+	
+		for (let i = 0; clients.length > i; i++) {
+			const { NAME, IP, PORT } = clients[i];
+			
+			newClients[NAME] = new Client(IP, PORT);
+		}
+
+	} else {
+
+		const { NAME, IP, PORT } = clients;
+		const client = new Client(IP, PORT);
+		
+		newClients[NAME] = client;
+
+	}
+
+	return newClients
+}
+
+function setupOSCServer( host: string, port: number, callback?: Function ) {
+	const botServer = new Server(port, host, function() {
+		if (callback) callback();
+	})
+
+	botServer.on('message', msg => {
+		if (DEBUG) {
+			console.log(msg)
+		}
+	})
+}
 
 export default class Bot {
 	config: Config
 	osc: {
-		listen: Function,
-		send: Function,
-		clients: Array<Client>
+		clients: object
 	}
+	onChat: Function
+	onCheer: Function
+	onCommand: Function
+	onRaid: Function
+	onRedeem: Function
+	onSub: Function
+
 
 	constructor( config: Config ) {
+		const { bot, oauth, channel } = config.twitch
 
-	}
+		setupTwitch( bot, oauth, channel )
 
-	setupTwitch( botName: string, oauthKey: string, channelName: string) {
-		if (DEBUG) {
-			console.log('DEBUG mode is ON');
-		} else {
-			// TODO: branch for case when bot is third party
-			// and not channel user's OAuth
-			// see: https://github.com/instafluff/ComfyJS?tab=readme-ov-file#channel-point-reward-redemptions
-			// this is channel user ONLY
+		const { SERVER, CLIENTS } = config.OSC_PREFS
 
-			ComfyJS.Init(botName, oauthKey, channelName);
+		setupOSCServer( SERVER.IP, SERVER.PORT )
+		
+		const clients = setupOSCClients( CLIENTS )
 
+		this.osc = {
+			...clients
 		}
+
+		this.onChat = ComfyJS.onChat
+		this.onCheer = ComfyJS.onCheer
+		this.onCommand = ComfyJS.onCommand
+		this.onRaid = ComfyJS.onRaid
+		this.onRedeem = ComfyJS.onReward
+		this.onSub = ComfyJS.onSub
 	}
 
-	setupOSCClients( clients: Array<OSCClient> | OSCClient ) {
+	
 
-		if (Array.isArray(clients)) {
+	
 
-			const newClients: object = {};
-
-			for (let i = 0; clients.length > i; i++) {
-				const { name, host, port } = clients[i];
-
-				const client = new Client(host, port);
-
-				// e.g. this.osc.IPAD.send(…)
-				this.osc[name] = client
-			}
-
-		} else {
-
-			const { name, host, port } = clients;
-			const client = new Client(host, port);
-
-			this.osc[name] = client;
-
-		}
-	}
-
-	setupOSCServer( host: string, port: number, callback?: Function ) {
-		const botServer = new Server(port, host, function() {
-			if (callback) callback();
-		})
-
-		this.osc.listen = botServer.on
-	}
+	
 
 
 	// comfy: any

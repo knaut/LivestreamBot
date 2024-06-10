@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -7,37 +18,21 @@ var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 var fs_1 = __importDefault(require("fs"));
 var child_process_1 = require("child_process");
-// const fredSays = function(string) {
-//   exec(`say -v Victoria "${string}"`)
-// }
-var botSays = function (voice, str) {
-    (0, child_process_1.exec)("say -v ".concat(voice, " \"").concat(str, "\""));
-};
 var Bot_1 = __importDefault(require("./classes/Bot"));
+// ingest config file
+var botConfig = JSON.parse(fs_1.default.readFileSync('./config.json', 'utf8'));
 // should be a string literal...?
-var HOST_IP = '192.168.0.30';
-var config = {
-    comfy: {
+// const HOST_IP: '192.168.0.30' = '192.168.0.30';
+var config = __assign({ twitch: {
         bot: process.env.BOT,
         oauth: process.env.GLEUBOT_OAUTH_TOKEN,
         channel: process.env.CHANNEL
-    },
-    osc: {
-        server: {
-            host: HOST_IP,
-            port: 5000
-        },
-        clients: [
-            {
-                name: 'IPAD',
-                host: HOST_IP,
-                port: 5001
-            }
-        ]
-    }
-};
+    } }, botConfig);
 var bot = new Bot_1.default(config);
-var testconfig = JSON.parse(fs_1.default.readFileSync('./config.json', 'utf8'));
+console.log(bot);
+var botSays = function (voice, str) {
+    (0, child_process_1.exec)("say -v ".concat(voice, " \"").concat(str, "\""));
+};
 /*
 bot.comfy.onReward = function(user, reward, cost, message, extra) {
     console.log( user + " redeemed " + reward + " for " + cost )
