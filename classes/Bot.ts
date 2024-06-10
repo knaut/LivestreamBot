@@ -3,17 +3,18 @@ import { Client, Server } from 'node-osc';
 
 import Config from '../interfaces/Config';
 
-const DEBUG: boolean = true; // make this global/env
+const DEBUG: boolean = false; // make this global/env
 
 
 
 
 export default class Bot {
 	comfy: any
-	osc: {
+	/*osc: {
 		server: object,
 		clients: object
-	}
+	}*/
+	osc: any
 
 	constructor(config: Config) {
 		// this.config = config; // consider not doing this
@@ -26,9 +27,20 @@ export default class Bot {
 		this.setupTwitch({ bot, oauth, channel });
 
 		// osc setup
-		const { clients } = config.osc
-		const newClients = this.setupOSC(clients);
-		this.osc.clients = newClients
+		const { clients, server } = config.osc
+		const { host, port } = server
+
+		const botServer = new Server(port, host, () => {
+			console.log('OSC Server is listening')
+		})
+		
+		const oscClients = this.setupOSCClient(clients);
+
+		// this.osc.clients = newClients
+		this.osc = {
+			server: botServer,
+			clients: oscClients
+		}
 		
 		console.log(this.osc)
 	}
@@ -45,7 +57,7 @@ export default class Bot {
 		}
 	}
 
-	setupOSC(clients) {
+	setupOSCClient(clients) {
 		const newClients: object = {}
 
 		for (let i = 0; clients.length > i; i++) {

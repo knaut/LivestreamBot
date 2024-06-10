@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var comfy_js_1 = __importDefault(require("comfy.js"));
 var node_osc_1 = require("node-osc");
-var DEBUG = true; // make this global/env
+var DEBUG = false; // make this global/env
 var Bot = /** @class */ (function () {
     function Bot(config) {
         // this.config = config; // consider not doing this
@@ -15,9 +15,17 @@ var Bot = /** @class */ (function () {
         var _a = config.comfy, bot = _a.bot, oauth = _a.oauth, channel = _a.channel;
         this.setupTwitch({ bot: bot, oauth: oauth, channel: channel });
         // osc setup
-        var clients = config.osc.clients;
-        var newClients = this.setupOSC(clients);
-        this.osc.clients = newClients;
+        var _b = config.osc, clients = _b.clients, server = _b.server;
+        var host = server.host, port = server.port;
+        var botServer = new node_osc_1.Server(port, host, function () {
+            console.log('OSC Server is listening');
+        });
+        var oscClients = this.setupOSCClient(clients);
+        // this.osc.clients = newClients
+        this.osc = {
+            server: botServer,
+            clients: oscClients
+        };
         console.log(this.osc);
     }
     Bot.prototype.setupTwitch = function (_a) {
@@ -34,7 +42,7 @@ var Bot = /** @class */ (function () {
             console.log('ran setupTwitch() with:', bot);
         }
     };
-    Bot.prototype.setupOSC = function (clients) {
+    Bot.prototype.setupOSCClient = function (clients) {
         var newClients = {};
         for (var i = 0; clients.length > i; i++) {
             var _a = clients[i], name_1 = _a.name, host = _a.host, port = _a.port;
