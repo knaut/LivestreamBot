@@ -41,6 +41,35 @@ var testconfig = JSON.parse(fs_1.default.readFileSync('./config.json', 'utf8'));
 console.log(bot.osc.server
 // testconfig.OSC.RAID_1.comfy.Say
 );
+bot.comfy.onReward = function (user, reward, cost, message, extra) {
+    console.log(user + " redeemed " + reward + " for " + cost);
+    var rewardString = reward;
+    var redeemBlocks = testconfig.REDEEMS;
+    for (var redeemBlocksKey in redeemBlocks) {
+        var redeemBlock = redeemBlocks[redeemBlocksKey];
+        console.log('redeemBlocksKey', redeemBlocksKey, redeemBlock);
+        for (var messageKindKey in redeemBlock) {
+            // const apiMessage = redeemBlock[ messageKindKey ]
+            // console.log(apiMessage, messageKindKey)
+            // for (let messageKindKey in apiMessage) {
+            if (messageKindKey === "comfy") {
+                // const messageText = apiMessage[messageKindKey]
+                var messageText = redeemBlock[messageKindKey];
+                bot.comfy.Say(messageText);
+            }
+            if (messageKindKey === "speech") {
+                var voiceMessagesBlock = redeemBlock[messageKindKey];
+                var voices = Object.keys(voiceMessagesBlock);
+                for (var i = 0; voices.length > i; i++) {
+                    var voice = voices[i];
+                    var message_1 = voiceMessagesBlock[voice];
+                    botSays(voice, message_1);
+                }
+            }
+            // }
+        }
+    }
+};
 bot.osc.server.on('message', function (msg) {
     console.log('OSC message', msg);
     var addressOSC = msg[0], value = msg[1];
@@ -52,24 +81,28 @@ bot.osc.server.on('message', function (msg) {
         // for a specific API/platform/application
         for (var apiBlockKey in testconfig) {
             var apiBlock = testconfig[apiBlockKey];
-            for (var apiMessageKey in apiBlock) {
-                var apiMessage = apiBlock[apiMessageKey];
-                if ("/".concat(apiMessageKey) === addressOSC) {
-                    console.log(apiMessageKey, apiMessage);
-                    for (var messageKindKey in apiMessage) {
-                        console.log('messageKindKey', messageKindKey);
-                        if (messageKindKey === "comfy") {
-                            var messageText = apiMessage[messageKindKey];
-                            // const messageText = messageKind[messageKindKey]
-                            bot.comfy.Say(messageText);
-                        }
-                        if (messageKindKey === "speech") {
-                            var voiceMessagesBlock = apiMessage[messageKindKey];
-                            var voices = Object.keys(voiceMessagesBlock);
-                            for (var i = 0; voices.length > i; i++) {
-                                var voice = voices[i];
-                                var message = voiceMessagesBlock[voice];
-                                botSays(voice, message);
+            if (apiBlockKey === "OSC") {
+                // all ur OSC stuff goes here
+                // ...
+                for (var apiMessageKey in apiBlock) {
+                    var apiMessage = apiBlock[apiMessageKey];
+                    if ("/".concat(apiMessageKey) === addressOSC) {
+                        console.log(apiMessageKey, apiMessage);
+                        for (var messageKindKey in apiMessage) {
+                            console.log('messageKindKey', messageKindKey);
+                            if (messageKindKey === "comfy") {
+                                var messageText = apiMessage[messageKindKey];
+                                // const messageText = messageKind[messageKindKey]
+                                bot.comfy.Say(messageText);
+                            }
+                            if (messageKindKey === "speech") {
+                                var voiceMessagesBlock = apiMessage[messageKindKey];
+                                var voices = Object.keys(voiceMessagesBlock);
+                                for (var i = 0; voices.length > i; i++) {
+                                    var voice = voices[i];
+                                    var message = voiceMessagesBlock[voice];
+                                    botSays(voice, message);
+                                }
                             }
                         }
                     }

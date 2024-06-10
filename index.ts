@@ -54,7 +54,56 @@ console.log(
 	// testconfig.OSC.RAID_1.comfy.Say
 )
 
+bot.comfy.onReward = function(user, reward, cost, message, extra) {
+	console.log( user + " redeemed " + reward + " for " + cost )
 
+	const rewardString = reward;
+	const redeemBlocks = testconfig.REDEEMS
+
+
+	for (let redeemBlocksKey in redeemBlocks) {
+
+		const redeemBlock = redeemBlocks[redeemBlocksKey]
+
+		console.log('redeemBlocksKey', redeemBlocksKey, redeemBlock)
+
+
+		for (let messageKindKey in redeemBlock) {
+			// const apiMessage = redeemBlock[ messageKindKey ]
+
+			// console.log(apiMessage, messageKindKey)
+
+			// for (let messageKindKey in apiMessage) {
+
+				if (messageKindKey === "comfy") {								
+					// const messageText = apiMessage[messageKindKey]
+
+					const messageText = redeemBlock[ messageKindKey ]
+
+					bot.comfy.Say( messageText )
+				}
+
+				if (messageKindKey === "speech") {
+
+					const voiceMessagesBlock = redeemBlock[messageKindKey]
+					
+					const voices = Object.keys(voiceMessagesBlock)
+					for (let i = 0; voices.length > i; i++) {
+						const voice = voices[i];
+						const message = voiceMessagesBlock[voice]
+						botSays(voice, message)
+					}
+				}
+
+			// }
+
+
+		}
+
+	}
+
+
+}
 
 bot.osc.server.on('message', function(msg) {
 	console.log('OSC message', msg);
@@ -73,48 +122,56 @@ bot.osc.server.on('message', function(msg) {
 		for (let apiBlockKey in testconfig) {
 			const apiBlock = testconfig[ apiBlockKey ]
 
-			for (let apiMessageKey in apiBlock) {
-				const apiMessage = apiBlock[ apiMessageKey ]
+			if (apiBlockKey === "OSC") {
+				// all ur OSC stuff goes here
+				// ...
 
-				if (`/${apiMessageKey}` === addressOSC) {
+				for (let apiMessageKey in apiBlock) {
+					const apiMessage = apiBlock[ apiMessageKey ]
 
-					console.log(apiMessageKey, apiMessage)
+					if (`/${apiMessageKey}` === addressOSC) {
 
-					for (let messageKindKey in apiMessage) {
-						console.log('messageKindKey', messageKindKey)
+						console.log(apiMessageKey, apiMessage)
+
+						for (let messageKindKey in apiMessage) {
+							console.log('messageKindKey', messageKindKey)
 
 
-						if (messageKindKey === "comfy") {
-							
-							const messageText = apiMessage[messageKindKey]
-							// const messageText = messageKind[messageKindKey]
-							bot.comfy.Say( messageText )
+							if (messageKindKey === "comfy") {
+								
+								const messageText = apiMessage[messageKindKey]
+								// const messageText = messageKind[messageKindKey]
+								bot.comfy.Say( messageText )
 
-						}
+							}
 
-						if (messageKindKey === "speech") {
+							if (messageKindKey === "speech") {
 
-							const voiceMessagesBlock = apiMessage[messageKindKey]
-							const voices = Object.keys(voiceMessagesBlock)
+								const voiceMessagesBlock = apiMessage[messageKindKey]
+								const voices = Object.keys(voiceMessagesBlock)
 
-							for (let i = 0; voices.length > i; i++) {
-								const voice = voices[i];
-								const message = voiceMessagesBlock[voice]
+								for (let i = 0; voices.length > i; i++) {
+									const voice = voices[i];
+									const message = voiceMessagesBlock[voice]
 
-								botSays(voice, message)
+									botSays(voice, message)
+
+								}
 
 							}
 
 						}
 
+
 					}
 
+					
 
 				}
 
-				
-
 			}
+
+			
 
 
 		}
