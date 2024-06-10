@@ -37,6 +37,27 @@ export default class Bot {
 
 	setupOSCClients( clients: Array<OSCClient> | OSCClient ) {
 
+		if (Array.isArray(clients)) {
+
+			const newClients: object = {};
+
+			for (let i = 0; clients.length > i; i++) {
+				const { name, host, port } = clients[i];
+
+				const client = new Client(host, port);
+
+				// e.g. this.osc.IPAD.send(…)
+				this.osc[name] = client
+			}
+
+		} else {
+
+			const { name, host, port } = clients;
+			const client = new Client(host, port);
+
+			this.osc[name] = client;
+
+		}
 	}
 
 	setupOSCServer( host: string, port: number, callback?: Function ) {

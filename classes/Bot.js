@@ -22,6 +22,20 @@ var Bot = /** @class */ (function () {
         }
     };
     Bot.prototype.setupOSCClients = function (clients) {
+        if (Array.isArray(clients)) {
+            var newClients = {};
+            for (var i = 0; clients.length > i; i++) {
+                var _a = clients[i], name_1 = _a.name, host = _a.host, port = _a.port;
+                var client = new node_osc_1.Client(host, port);
+                // e.g. this.osc.IPAD.send(…)
+                this.osc[name_1] = client;
+            }
+        }
+        else {
+            var name_2 = clients.name, host = clients.host, port = clients.port;
+            var client = new node_osc_1.Client(host, port);
+            this.osc[name_2] = client;
+        }
     };
     Bot.prototype.setupOSCServer = function (host, port, callback) {
         var botServer = new node_osc_1.Server(port, host, function () {
