@@ -46,14 +46,8 @@ const config: Config = {
 
 const bot = new Bot(config);
 
-
 const testconfig = JSON.parse( fs.readFileSync('./config.json', 'utf8') );
-
-console.log(
-	bot.osc.server
-	// testconfig.OSC.RAID_1.comfy.Say
-)
-
+/*
 bot.comfy.onReward = function(user, reward, cost, message, extra) {
 	console.log( user + " redeemed " + reward + " for " + cost )
 
@@ -65,37 +59,24 @@ bot.comfy.onReward = function(user, reward, cost, message, extra) {
 
 		const redeemBlock = redeemBlocks[redeemBlocksKey]
 
-		console.log('redeemBlocksKey', redeemBlocksKey, redeemBlock)
-
 
 		for (let messageKindKey in redeemBlock) {
-			// const apiMessage = redeemBlock[ messageKindKey ]
 
-			// console.log(apiMessage, messageKindKey)
+			if (messageKindKey === "comfy") {								
+				const messageText = redeemBlock[ messageKindKey ]
+				bot.comfy.Say( messageText )
+			}
 
-			// for (let messageKindKey in apiMessage) {
-
-				if (messageKindKey === "comfy") {								
-					// const messageText = apiMessage[messageKindKey]
-
-					const messageText = redeemBlock[ messageKindKey ]
-
-					bot.comfy.Say( messageText )
+			if (messageKindKey === "speech") {
+				const voiceMessagesBlock = redeemBlock[messageKindKey]					
+				const voices = Object.keys(voiceMessagesBlock)
+				for (let i = 0; voices.length > i; i++) {
+					const voice = voices[i];
+					const message = voiceMessagesBlock[voice]
+					botSays(voice, message)
 				}
+			}
 
-				if (messageKindKey === "speech") {
-
-					const voiceMessagesBlock = redeemBlock[messageKindKey]
-					
-					const voices = Object.keys(voiceMessagesBlock)
-					for (let i = 0; voices.length > i; i++) {
-						const voice = voices[i];
-						const message = voiceMessagesBlock[voice]
-						botSays(voice, message)
-					}
-				}
-
-			// }
 
 
 		}
@@ -104,7 +85,9 @@ bot.comfy.onReward = function(user, reward, cost, message, extra) {
 
 
 }
+*/
 
+/*
 bot.osc.server.on('message', function(msg) {
 	console.log('OSC message', msg);
 
@@ -176,51 +159,7 @@ bot.osc.server.on('message', function(msg) {
 
 		}
 
-		/*
-		for (let key in OSC) {
-
-			if (address === `/${key}`) {
-
-
-				const block = OSC[key]
-
-				for (let blockKey in block) {
-					// this is a given block of commands
-					// in an OSC object
-
-					switch(blockKey) {
-						case "comfy": {
-
-							const messageText = block[blockKey].Say
-							bot.comfy.Say( messageText );
-
-						}
-						break;
-						case "speech": {
-
-							const voiceMessagesBlock = block[blockKey]
-
-							const voices = Object.keys(voiceMessagesBlock)
-
-							for (let i = 0; voices.length > i; i++) {
-								const voice = voices[i];
-								const message = voiceMessagesBlock[voice]
-
-								botSays(voice, message)
-
-							}
-
-
-						}
-						break;
-					}
-					// const apiBlock = block[blockKey]
-
-				}
-			}
-
-		}
-		*/
+		
 		
 
 		// if (address === RAID_1) {
@@ -237,7 +176,7 @@ bot.osc.server.on('message', function(msg) {
 
 })
 
-
+*/
 
 
 

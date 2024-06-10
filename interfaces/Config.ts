@@ -7,12 +7,12 @@ export default interface Config {
 		channel: string
 	},
 	osc: {
-		// server: {
-		// 	host: string,
-		// 	port: number
-		// },
+		server: {
+			host: string,
+			port: number
+		},
 
-		server: any,
+		// server: any,
 		clients: Array<OSCClient>
 	}
 }
