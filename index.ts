@@ -59,30 +59,71 @@ console.log(
 bot.osc.server.on('message', function(msg) {
 	console.log('OSC message', msg);
 
-	const [ address, value ] = msg
+	const [ addressOSC, value ] = msg
 	const vdmxVal = 200
 
 	if (value > 0) {
 		///////
 
-		console.log("OSC message not zero", "address:", address)
-		const { OSC } = testconfig
+		console.log("OSC message not zero", "addressOSC:", addressOSC)
 
+		// "apiBlock" refers to a grouping of messages
+		// for a specific API/platform/application
+
+		for (let apiBlockKey in testconfig) {
+			const apiBlock = testconfig[ apiBlockKey ]
+
+			for (let apiMessageKey in apiBlock) {
+				const apiMessage = apiBlock[ apiMessageKey ]
+
+				if (`/${apiMessageKey}` === addressOSC) {
+
+					console.log(apiMessageKey, apiMessage)
+
+					for (let messageKindKey in apiMessage) {
+						console.log('messageKindKey', messageKindKey)
+
+
+						if (messageKindKey === "comfy") {
+							
+							const messageText = apiMessage[messageKindKey]
+							// const messageText = messageKind[messageKindKey]
+							bot.comfy.Say( messageText )
+
+						}
+
+						if (messageKindKey === "speech") {
+
+							const voiceMessagesBlock = apiMessage[messageKindKey]
+							const voices = Object.keys(voiceMessagesBlock)
+
+							for (let i = 0; voices.length > i; i++) {
+								const voice = voices[i];
+								const message = voiceMessagesBlock[voice]
+
+								botSays(voice, message)
+
+							}
+
+						}
+
+					}
+
+
+				}
+
+				
+
+			}
+
+
+		}
+
+		/*
 		for (let key in OSC) {
-			// console.log(key)
-
-			// const actualAddress = `/${address}`
-			// console.log(actualAddress, key)
 
 			if (address === `/${key}`) {
-				// console.log('address matches key')
 
-
-				// const messageText = OSC[key].comfy.Say
-				// console.log('bot.comfy.Say', messageText)
-
-				// bot.comfy.Say( messageText )
-				// fredSays( messageText )
 
 				const block = OSC[key]
 
@@ -122,6 +163,8 @@ bot.osc.server.on('message', function(msg) {
 			}
 
 		}
+		*/
+		
 
 		// if (address === RAID_1) {
 

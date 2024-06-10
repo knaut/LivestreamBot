@@ -43,49 +43,84 @@ console.log(bot.osc.server
 );
 bot.osc.server.on('message', function (msg) {
     console.log('OSC message', msg);
-    var address = msg[0], value = msg[1];
+    var addressOSC = msg[0], value = msg[1];
     var vdmxVal = 200;
     if (value > 0) {
         ///////
-        console.log("OSC message not zero", "address:", address);
-        var OSC = testconfig.OSC;
-        for (var key in OSC) {
-            // console.log(key)
-            // const actualAddress = `/${address}`
-            // console.log(actualAddress, key)
-            if (address === "/".concat(key)) {
-                // console.log('address matches key')
-                // const messageText = OSC[key].comfy.Say
-                // console.log('bot.comfy.Say', messageText)
-                // bot.comfy.Say( messageText )
-                // fredSays( messageText )
-                var block = OSC[key];
-                for (var blockKey in block) {
-                    // this is a given block of commands
-                    // in an OSC object
-                    switch (blockKey) {
-                        case "comfy":
-                            {
-                                var messageText = block[blockKey].Say;
-                                bot.comfy.Say(messageText);
+        console.log("OSC message not zero", "addressOSC:", addressOSC);
+        // "apiBlock" refers to a grouping of messages
+        // for a specific API/platform/application
+        for (var apiBlockKey in testconfig) {
+            var apiBlock = testconfig[apiBlockKey];
+            for (var apiMessageKey in apiBlock) {
+                var apiMessage = apiBlock[apiMessageKey];
+                if ("/".concat(apiMessageKey) === addressOSC) {
+                    console.log(apiMessageKey, apiMessage);
+                    for (var messageKindKey in apiMessage) {
+                        console.log('messageKindKey', messageKindKey);
+                        if (messageKindKey === "comfy") {
+                            var messageText = apiMessage[messageKindKey];
+                            // const messageText = messageKind[messageKindKey]
+                            bot.comfy.Say(messageText);
+                        }
+                        if (messageKindKey === "speech") {
+                            var voiceMessagesBlock = apiMessage[messageKindKey];
+                            var voices = Object.keys(voiceMessagesBlock);
+                            for (var i = 0; voices.length > i; i++) {
+                                var voice = voices[i];
+                                var message = voiceMessagesBlock[voice];
+                                botSays(voice, message);
                             }
-                            break;
-                        case "speech":
-                            {
-                                var voiceMessagesBlock = block[blockKey];
-                                var voices = Object.keys(voiceMessagesBlock);
-                                for (var i = 0; voices.length > i; i++) {
-                                    var voice = voices[i];
-                                    var message = voiceMessagesBlock[voice];
-                                    botSays(voice, message);
-                                }
-                            }
-                            break;
+                        }
                     }
-                    // const apiBlock = block[blockKey]
                 }
             }
         }
+        /*
+        for (let key in OSC) {
+
+            if (address === `/${key}`) {
+
+
+                const block = OSC[key]
+
+                for (let blockKey in block) {
+                    // this is a given block of commands
+                    // in an OSC object
+
+                    switch(blockKey) {
+                        case "comfy": {
+
+                            const messageText = block[blockKey].Say
+                            bot.comfy.Say( messageText );
+
+                        }
+                        break;
+                        case "speech": {
+
+                            const voiceMessagesBlock = block[blockKey]
+
+                            const voices = Object.keys(voiceMessagesBlock)
+
+                            for (let i = 0; voices.length > i; i++) {
+                                const voice = voices[i];
+                                const message = voiceMessagesBlock[voice]
+
+                                botSays(voice, message)
+
+                            }
+
+
+                        }
+                        break;
+                    }
+                    // const apiBlock = block[blockKey]
+
+                }
+            }
+
+        }
+        */
         // if (address === RAID_1) {
         // 	bot.comfy.Say( OSC.RAID_1.comfy.Say )	
         // }
