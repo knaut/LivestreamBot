@@ -8,6 +8,7 @@ import OSCClient from '../interfaces/OSCClient';
 
 import { onRedeem } from '../methods/onRedeem'
 import { onCommand } from '../methods/onCommand'
+import { onOSC } from '../methods/onOSC'
 
 function speak( voice: string, str: string ) {
 	exec(`say -v ${voice} "${str}"`)
@@ -68,15 +69,8 @@ export default class Bot {
 
 	ACTIONS: object	
 
-	// onChat: Function
-	// onCheer: Function
-	// onCommand: Function
-	// onRaid: Function
-	// onRedeem: Function
-	// onSub: Function
-
 	speak: Function
-	runActionBlock: Function
+	onOSC: Function
 
 	constructor( config: Config ) {
 		const { botName, oauth, channel } = config.twitch
@@ -97,19 +91,19 @@ export default class Bot {
 		this.ACTIONS = ACTIONS
 		this.channel = config.twitch.channel
 
+		// TODO:
 		// this.onChat = ComfyJS.onChat
 		// this.onCheer = ComfyJS.onCheer
 		// this.onCommand = ComfyJS.onCommand
 		// this.onRaid = ComfyJS.onRaid
 		// this.onSub = ComfyJS.onSub
 
-
 		ComfyJS.onReward = onRedeem.bind(this)
 		ComfyJS.onCommand = onCommand.bind(this)
 
 
-
 		this.speak = speak
+		this.onOSC = onOSC.bind(this)
 	}
 
 }

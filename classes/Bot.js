@@ -19,6 +19,7 @@ var comfy_js_1 = __importDefault(require("comfy.js"));
 var node_osc_1 = require("node-osc");
 var onRedeem_1 = require("../methods/onRedeem");
 var onCommand_1 = require("../methods/onCommand");
+var onOSC_1 = require("../methods/onOSC");
 function speak(voice, str) {
     (0, child_process_1.exec)("say -v ".concat(voice, " \"").concat(str, "\""));
 }
@@ -71,6 +72,7 @@ var Bot = /** @class */ (function () {
         this.osc = __assign({}, clients);
         this.ACTIONS = ACTIONS;
         this.channel = config.twitch.channel;
+        // TODO:
         // this.onChat = ComfyJS.onChat
         // this.onCheer = ComfyJS.onCheer
         // this.onCommand = ComfyJS.onCommand
@@ -79,6 +81,7 @@ var Bot = /** @class */ (function () {
         comfy_js_1.default.onReward = onRedeem_1.onRedeem.bind(this);
         comfy_js_1.default.onCommand = onCommand_1.onCommand.bind(this);
         this.speak = speak;
+        this.onOSC = onOSC_1.onOSC.bind(this);
     }
     return Bot;
 }());
