@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import fs from 'fs'
-import { exec } from 'child_process'
 
 import Config from './interfaces/Config'
 import Bot from './classes/Bot'
@@ -14,11 +13,14 @@ const botConfig = JSON.parse( fs.readFileSync('./config.json', 'utf8') );
 // const HOST_IP: '192.168.0.30' = '192.168.0.30';
 
 const config: Config = {
+	debug: process.env.DEBUG,
+
 	twitch: {
-		bot: process.env.BOT,
+		botName: process.env.BOT_NAME,
 		oauth: process.env.GLEUBOT_OAUTH_TOKEN,
 		channel: process.env.CHANNEL
 	},
+
 	...botConfig
 }
 
@@ -31,9 +33,7 @@ console.log(bot)
 
 
 
-const botSays = function(voice: string, str: string) {
-	exec(`say -v ${voice} "${str}"`)
-}
+
 
 /*
 bot.comfy.onReward = function(user, reward, cost, message, extra) {

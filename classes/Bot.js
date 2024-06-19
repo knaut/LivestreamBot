@@ -14,11 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var child_process_1 = require("child_process");
 var comfy_js_1 = __importDefault(require("comfy.js"));
 var node_osc_1 = require("node-osc");
-var DEBUG = true; // make this global/env
-function setupTwitch(botName, oauthKey, channelName) {
-    if (DEBUG) {
+var DEBUG = false; // make this global/env
+function say(voice, str) {
+    (0, child_process_1.exec)("say -v ".concat(voice, " \"").concat(str, "\""));
+}
+function setupTwitch(debug, botName, oauthKey, channelName) {
+    if (debug) {
         console.log('DEBUG mode is ON');
     }
     else {
@@ -57,8 +61,9 @@ function setupOSCServer(host, port, callback) {
 }
 var Bot = /** @class */ (function () {
     function Bot(config) {
-        var _a = config.twitch, bot = _a.bot, oauth = _a.oauth, channel = _a.channel;
-        setupTwitch(bot, oauth, channel);
+        var _a = config.twitch, botName = _a.botName, oauth = _a.oauth, channel = _a.channel;
+        var debug = config.debug;
+        setupTwitch(debug, botName, oauth, channel);
         var _b = config.OSC_PREFS, SERVER = _b.SERVER, CLIENTS = _b.CLIENTS;
         setupOSCServer(SERVER.IP, SERVER.PORT);
         var clients = setupOSCClients(CLIENTS);
@@ -69,6 +74,7 @@ var Bot = /** @class */ (function () {
         this.onRaid = comfy_js_1.default.onRaid;
         this.onRedeem = comfy_js_1.default.onReward;
         this.onSub = comfy_js_1.default.onSub;
+        this.say = say;
     }
     return Bot;
 }());

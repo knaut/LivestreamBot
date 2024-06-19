@@ -17,22 +17,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 var fs_1 = __importDefault(require("fs"));
-var child_process_1 = require("child_process");
 var Bot_1 = __importDefault(require("./classes/Bot"));
 // ingest config file
 var botConfig = JSON.parse(fs_1.default.readFileSync('./config.json', 'utf8'));
 // should be a string literal...?
 // const HOST_IP: '192.168.0.30' = '192.168.0.30';
-var config = __assign({ twitch: {
-        bot: process.env.BOT,
+var config = __assign({ debug: process.env.DEBUG, twitch: {
+        botName: process.env.BOT_NAME,
         oauth: process.env.GLEUBOT_OAUTH_TOKEN,
         channel: process.env.CHANNEL
     } }, botConfig);
 var bot = new Bot_1.default(config);
 console.log(bot);
-var botSays = function (voice, str) {
-    (0, child_process_1.exec)("say -v ".concat(voice, " \"").concat(str, "\""));
-};
 /*
 bot.comfy.onReward = function(user, reward, cost, message, extra) {
     console.log( user + " redeemed " + reward + " for " + cost )

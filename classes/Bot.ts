@@ -1,14 +1,19 @@
+import { exec } from 'child_process'
+
 import ComfyJS from 'comfy.js';
 import { Client, Server } from 'node-osc';
 
 import Config from '../interfaces/Config';
 import OSCClient from '../interfaces/OSCClient';
 
-const DEBUG: boolean = true; // make this global/env
+const DEBUG: boolean = false; // make this global/env
 
+function say( voice: string, str: string ) {
+	exec(`say -v ${voice} "${str}"`)
+}
 
-function setupTwitch( botName: string, oauthKey: string, channelName: string) {
-	if (DEBUG) {
+function setupTwitch( debug: boolean, botName: string, oauthKey: string, channelName: string) {
+	if (debug) {
 		console.log('DEBUG mode is ON');
 	} else {
 		// TODO: branch for case when bot is third party
@@ -56,21 +61,21 @@ function setupOSCServer( host: string, port: number, callback?: Function ) {
 
 export default class Bot {
 	config: Config
-	osc: {
-		clients: object
-	}
+	osc: object
 	onChat: Function
 	onCheer: Function
 	onCommand: Function
 	onRaid: Function
 	onRedeem: Function
 	onSub: Function
+	say: Function
 
 
 	constructor( config: Config ) {
-		const { bot, oauth, channel } = config.twitch
+		const { botName, oauth, channel } = config.twitch
+		const { debug } = config
 
-		setupTwitch( bot, oauth, channel )
+		setupTwitch( debug, botName, oauth, channel )
 
 		const { SERVER, CLIENTS } = config.OSC_PREFS
 
@@ -88,6 +93,8 @@ export default class Bot {
 		this.onRaid = ComfyJS.onRaid
 		this.onRedeem = ComfyJS.onReward
 		this.onSub = ComfyJS.onSub
+
+		this.say = say
 	}
 
 	

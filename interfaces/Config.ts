@@ -1,26 +1,28 @@
 import OSCClient from './OSCClient'
 
 export default interface Config {
+	debug: boolean
+
 	twitch: {
-		bot: string,
-		oauth: string,
+		botName: string
+		oauth: string
 		channel: string
-	},
+	}
 
 	OSC_PREFS: {
 		SERVER: {
-			IP: string,
+			IP: string
 			PORT: number
-		},
-		CLIENTS: Array<OSCClient> | OSCClient,
+		}
+		CLIENTS: Array<OSCClient> | OSCClient
 		ACTIONS: object
 	}
 
 	osc: {
 		server: {
-			host: string,
+			host: string
 			port: number
-		},
+		}
 
 		// server: any,
 		clients: Array<OSCClient>
