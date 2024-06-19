@@ -17,12 +17,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var child_process_1 = require("child_process");
 var comfy_js_1 = __importDefault(require("comfy.js"));
 var node_osc_1 = require("node-osc");
+var onRedeem_1 = __importDefault(require("../methods/onRedeem"));
+var onCommand_1 = __importDefault(require("../methods/onCommand"));
 var DEBUG = false; // make this global/env
 function say(voice, str) {
     (0, child_process_1.exec)("say -v ".concat(voice, " \"").concat(str, "\""));
 }
 function setupTwitch(debug, botName, oauthKey, channelName) {
-    if (debug) {
+    if (debug === true) {
         console.log('DEBUG mode is ON');
     }
     else {
@@ -62,18 +64,20 @@ function setupOSCServer(host, port, callback) {
 var Bot = /** @class */ (function () {
     function Bot(config) {
         var _a = config.twitch, botName = _a.botName, oauth = _a.oauth, channel = _a.channel;
-        var debug = config.debug;
+        var debug = config.debug, ACTIONS = config.ACTIONS;
         setupTwitch(debug, botName, oauth, channel);
         var _b = config.OSC_PREFS, SERVER = _b.SERVER, CLIENTS = _b.CLIENTS;
         setupOSCServer(SERVER.IP, SERVER.PORT);
         var clients = setupOSCClients(CLIENTS);
         this.osc = __assign({}, clients);
-        this.onChat = comfy_js_1.default.onChat;
-        this.onCheer = comfy_js_1.default.onCheer;
-        this.onCommand = comfy_js_1.default.onCommand;
-        this.onRaid = comfy_js_1.default.onRaid;
-        this.onRedeem = comfy_js_1.default.onReward;
-        this.onSub = comfy_js_1.default.onSub;
+        this.ACTIONS = ACTIONS;
+        // this.onChat = ComfyJS.onChat
+        // this.onCheer = ComfyJS.onCheer
+        // this.onCommand = ComfyJS.onCommand
+        // this.onRaid = ComfyJS.onRaid
+        // this.onSub = ComfyJS.onSub
+        comfy_js_1.default.onReward = onRedeem_1.default.bind(this);
+        comfy_js_1.default.onCommand = onCommand_1.default.bind(this);
         this.say = say;
     }
     return Bot;

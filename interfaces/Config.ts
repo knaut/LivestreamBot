@@ -15,8 +15,8 @@ export default interface Config {
 			PORT: number
 		}
 		CLIENTS: Array<OSCClient> | OSCClient
-		ACTIONS: object
 	}
+	ACTIONS: object
 
 	osc: {
 		server: {
@@ -27,4 +27,6 @@ export default interface Config {
 		// server: any,
 		clients: Array<OSCClient>
 	}
+
+	onCommand: Function
 }

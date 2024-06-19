@@ -6,6 +6,9 @@ import { Client, Server } from 'node-osc';
 import Config from '../interfaces/Config';
 import OSCClient from '../interfaces/OSCClient';
 
+import onRedeem from '../methods/onRedeem'
+import onCommand from '../methods/onCommand'
+
 const DEBUG: boolean = false; // make this global/env
 
 function say( voice: string, str: string ) {
@@ -13,7 +16,7 @@ function say( voice: string, str: string ) {
 }
 
 function setupTwitch( debug: boolean, botName: string, oauthKey: string, channelName: string) {
-	if (debug) {
+	if (debug === true) {
 		console.log('DEBUG mode is ON');
 	} else {
 		// TODO: branch for case when bot is third party
@@ -59,21 +62,27 @@ function setupOSCServer( host: string, port: number, callback?: Function ) {
 	})
 }
 
+
 export default class Bot {
 	config: Config
 	osc: object
-	onChat: Function
-	onCheer: Function
-	onCommand: Function
-	onRaid: Function
-	onRedeem: Function
-	onSub: Function
+
+	ACTIONS: object	
+
+	// onChat: Function
+	// onCheer: Function
+	// onCommand: Function
+	// onRaid: Function
+	// onRedeem: Function
+	// onSub: Function
+
 	say: Function
 
 
 	constructor( config: Config ) {
 		const { botName, oauth, channel } = config.twitch
-		const { debug } = config
+		const { debug, ACTIONS } = config
+
 
 		setupTwitch( debug, botName, oauth, channel )
 
@@ -86,88 +95,21 @@ export default class Bot {
 		this.osc = {
 			...clients
 		}
+		this.ACTIONS = ACTIONS
 
-		this.onChat = ComfyJS.onChat
-		this.onCheer = ComfyJS.onCheer
-		this.onCommand = ComfyJS.onCommand
-		this.onRaid = ComfyJS.onRaid
-		this.onRedeem = ComfyJS.onReward
-		this.onSub = ComfyJS.onSub
+		// this.onChat = ComfyJS.onChat
+		// this.onCheer = ComfyJS.onCheer
+		// this.onCommand = ComfyJS.onCommand
+		// this.onRaid = ComfyJS.onRaid
+		// this.onSub = ComfyJS.onSub
+
+
+		ComfyJS.onReward = onRedeem.bind(this)
+		ComfyJS.onCommand = onCommand.bind(this)
+
+
 
 		this.say = say
 	}
-
-	
-
-	
-
-	
-
-
-	// comfy: any
-	/*osc: {
-		server: object,
-		clients: object
-	}*/
-	// osc: any
-
-	/*
-	constructor(config: Config) {
-		// this.config = config; // consider not doing this
-
-		this.comfy = ComfyJS;
-		this.osc = config.osc
-
-		// comfyjs setup
-		const { bot, oauth, channel } = config.comfy
-		this.setupTwitch({ bot, oauth, channel });
-
-		// osc setup
-		const { clients, server } = config.osc
-		const { host, port } = server
-
-		const botServer = new Server(port, host, () => {
-			console.log('OSC Server is listening')
-		})
-		
-		const oscClients = this.setupOSCClient(clients);
-
-		// this.osc.clients = newClients
-		this.osc = {
-			server: botServer,
-			clients: oscClients
-		}
-		
-		console.log(this.osc)
-	}
-	*/
-
-	/*
-	setupTwitch({ bot, oauth, channel}) {
-		if (!DEBUG) {
-			if (!channel) {
-				this.comfy.Init(bot, oauth)
-			} else {
-				this.comfy.Init(bot, oauth, channel)
-			}	
-		} else {
-			console.log('ran setupTwitch() with:', bot);
-		}
-	}
-
-	setupOSCClient(clients) {
-		const newClients: object = {}
-
-		for (let i = 0; clients.length > i; i++) {
-			const { name, host, port } = clients[i]
-
-			const client = new Client(host, port)
-
-			newClients[name] = client
-		}
-
-		return newClients
-	}
-	*/
 
 }

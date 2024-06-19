@@ -13,11 +13,11 @@ const botConfig = JSON.parse( fs.readFileSync('./config.json', 'utf8') );
 // const HOST_IP: '192.168.0.30' = '192.168.0.30';
 
 const config: Config = {
-	debug: process.env.DEBUG,
+	debug: process.env.DEBUG === "TRUE" ? true : false,
 
 	twitch: {
 		botName: process.env.BOT_NAME,
-		oauth: process.env.GLEUBOT_OAUTH_TOKEN,
+		oauth: process.env.BOT_OAUTH_TOKEN,
 		channel: process.env.CHANNEL
 	},
 
@@ -27,53 +27,9 @@ const config: Config = {
 const bot = new Bot(config);
 
 
-
-
 console.log(bot)
 
 
-
-
-
-/*
-bot.comfy.onReward = function(user, reward, cost, message, extra) {
-	console.log( user + " redeemed " + reward + " for " + cost )
-
-	const rewardString = reward;
-	const redeemBlocks = testconfig.REDEEMS
-
-
-	for (let redeemBlocksKey in redeemBlocks) {
-
-		const redeemBlock = redeemBlocks[redeemBlocksKey]
-
-
-		for (let messageKindKey in redeemBlock) {
-
-			if (messageKindKey === "comfy") {								
-				const messageText = redeemBlock[ messageKindKey ]
-				bot.comfy.Say( messageText )
-			}
-
-			if (messageKindKey === "speech") {
-				const voiceMessagesBlock = redeemBlock[messageKindKey]					
-				const voices = Object.keys(voiceMessagesBlock)
-				for (let i = 0; voices.length > i; i++) {
-					const voice = voices[i];
-					const message = voiceMessagesBlock[voice]
-					botSays(voice, message)
-				}
-			}
-
-
-
-		}
-
-	}
-
-
-}
-*/
 
 /*
 bot.osc.server.on('message', function(msg) {
