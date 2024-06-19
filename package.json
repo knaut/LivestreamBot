@@ -1,7 +1,7 @@
 {
-  "name": "gleubot_mk2",
+  "name": "LivestreamBot",
   "version": "1.0.0",
-  "description": "a twitch chatbot with OSC integration",
+  "description": "A livestream chatbot with OSC integration",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
