@@ -6,12 +6,10 @@ import { Client, Server } from 'node-osc';
 import Config from '../interfaces/Config';
 import OSCClient from '../interfaces/OSCClient';
 
-import onRedeem from '../methods/onRedeem'
-import onCommand from '../methods/onCommand'
+import { onRedeem } from '../methods/onRedeem'
+import { onCommand } from '../methods/onCommand'
 
-const DEBUG: boolean = false; // make this global/env
-
-function say( voice: string, str: string ) {
+function speak( voice: string, str: string ) {
 	exec(`say -v ${voice} "${str}"`)
 }
 
@@ -56,9 +54,9 @@ function setupOSCServer( host: string, port: number, callback?: Function ) {
 	})
 
 	botServer.on('message', msg => {
-		if (DEBUG) {
-			console.log(msg)
-		}
+		// if (debug) {
+		// 	console.log(msg)
+		// }
 	})
 }
 
@@ -66,6 +64,7 @@ function setupOSCServer( host: string, port: number, callback?: Function ) {
 export default class Bot {
 	config: Config
 	osc: object
+	channel: string
 
 	ACTIONS: object	
 
@@ -76,8 +75,8 @@ export default class Bot {
 	// onRedeem: Function
 	// onSub: Function
 
-	say: Function
-
+	speak: Function
+	runActionBlock: Function
 
 	constructor( config: Config ) {
 		const { botName, oauth, channel } = config.twitch
@@ -96,6 +95,7 @@ export default class Bot {
 			...clients
 		}
 		this.ACTIONS = ACTIONS
+		this.channel = config.twitch.channel
 
 		// this.onChat = ComfyJS.onChat
 		// this.onCheer = ComfyJS.onCheer
@@ -109,7 +109,7 @@ export default class Bot {
 
 
 
-		this.say = say
+		this.speak = speak
 	}
 
 }

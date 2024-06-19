@@ -1,4 +1,5 @@
-import { snakeCaseString } from '../methods/onRedeem'
+import { snakeCaseString, onRedeem } from '../methods/onRedeem'
+import config from '../config.json'
 
 describe('snakeCaseString', () => {
 	test('should turn "some text!" into "SOME_TEXT"', () => {
